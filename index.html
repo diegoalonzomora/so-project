@@ -8,30 +8,29 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <!-- Header -->
   <header class="header">
     <nav class="nav">
-      <div class="brand">
-        <div class="brand-badge">CB</div>
-        <a href="#top" aria-label="Cloudbeds" class="brand-name">Cloudbeds</a>
-      </div>
-      <div class="menu" role="navigation" aria-label="Primaria">
-        <a href="#features">Características</a>
-        <a href="#rooms">Habitaciones</a>
-        <a href="#how">Cómo funciona</a>
-        <a href="#reviews">Opiniones</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <div class="cta">
-        <button class="btn btn-outline" id="loginBtn">Iniciar sesión</button>
-        <a class="btn btn-primary" href="#search">Reservar ahora</a>
-        <button class="hamb" id="hamb" aria-label="Abrir menú">☰</button>
-      </div>
-    </nav>
+    <div class="brand">
+      <div class="brand-badge">CB</div>
+      <a href="#top" aria-label="Cloudbeds" class="brand-name">Cloudbeds</a>
+    </div>
+    <div class="menu" role="navigation" aria-label="Primaria">
+      <a href="#features">Características</a>
+      <a href="#rooms">Habitaciones</a>
+      <a href="#how">Cómo funciona</a>
+      <a href="#reviews">Opiniones</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="cta">
+      <!-- <button class="btn btn-outline" id="loginBtn">Iniciar sesión</button> --> <!-- eliminado -->
+      <a class="btn btn-primary" href="#search">Reservar ahora</a>
+      <button class="hamb" id="hamb" aria-label="Abrir menú">☰</button>
+    </div>
+  </nav>
     <div class="mobile" id="mobile">
       <a href="#features">Características</a>
       <a href="#rooms">Habitaciones</a>
@@ -45,12 +44,7 @@
   <!-- Hero -->
   <main id="top" class="hero">
     <div class="container hero-wrap">
-      <!-- Imagen reemplazada que sí funciona -->
-      <img
-        class="bg"
-        src="https://images.unsplash.com/photo-1496412705862-e0088f16f791?q=80&w=1920&auto=format&fit=crop"
-        alt="Lobby elegante de hotel"
-      />
+      <img class="bg" src="https://images.unsplash.com/photo-1496412705862-e0088f16f791?q=80&w=1920&auto=format&fit=crop" alt="Lobby elegante de hotel"/>
       <div class="overlay"></div>
       <div class="content container">
         <div class="hero-card">
@@ -60,9 +54,13 @@
 
           <!-- Search / booking bar -->
           <form id="search" class="search" aria-label="Buscador de disponibilidad">
+            <!-- SELECT de países (nuevo) -->
             <label class="field">
-              <span class="icon">📍</span>
-              <input type="text" name="destino" placeholder="Ciudad o destino" required />
+              <span class="icon">🌍</span>
+              <select id="paisSelect" name="pais" required>
+                <option value="">Selecciona un país</option>
+                <!-- opciones se cargan por JS -->
+              </select>
             </label>
             <label class="field">
               <span class="icon">📅</span>
@@ -87,8 +85,8 @@
 
     <!-- Features -->
     <section id="features" class="section container">
-      <h2 style="margin:0 0 14px; font-size:clamp(24px,3vw,36px)">Elegancia que se siente, tecnología que no se ve</h2>
-      <p class="muted" style="margin-bottom:24px">Una experiencia de reserva impecable con herramientas pensadas para tu tranquilidad.</p>
+      <h2 class="h-section">Elegancia que se siente, tecnología que no se ve</h2>
+      <p class="muted mb-24">Una experiencia de reserva impecable con herramientas pensadas para tu tranquilidad.</p>
       <div class="grid features">
         <article class="card"><div class="pill">🗓️ Reserva flexible</div><h3>Cancela o modifica sin complicaciones</h3><p class="muted">Políticas claras y procesos rápidos.</p></article>
         <article class="card"><div class="pill">🛡️ Seguridad bancaria</div><h3>Pagos cifrados y verificación</h3><p class="muted">Protección de extremo a extremo.</p></article>
@@ -101,8 +99,8 @@
 
     <!-- Rooms showcase -->
     <section id="rooms" class="section container">
-      <h2 style="margin:0 0 14px; font-size:clamp(24px,3vw,36px)">Habitaciones destacadas</h2>
-      <p class="muted" style="margin-bottom:24px">Diseños contemporáneos para cada viajero.</p>
+      <h2 class="h-section">Habitaciones destacadas</h2>
+      <p class="muted mb-24">Diseños contemporáneos para cada viajero.</p>
       <div class="grid rooms">
         <article class="card room">
           <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1400&auto=format&fit=crop" alt="Suite con vista"/>
@@ -133,12 +131,12 @@
 
     <!-- How it works -->
     <section id="how" class="section container">
-      <h2 style="margin:0 0 14px; font-size:clamp(24px,3vw,36px)">Cómo funciona</h2>
+      <h2 class="h-section">Cómo funciona</h2>
       <div class="grid steps">
         <article class="card">
           <div class="step-num">1</div>
           <h3>Explora</h3>
-          <p class="muted">Filtra por destino, fechas y estilo. Compara en segundos.</p>
+          <p class="muted">Filtra por país, fechas y estilo. Compara en segundos.</p>
         </article>
         <article class="card">
           <div class="step-num">2</div>
@@ -155,7 +153,7 @@
 
     <!-- Testimonials -->
     <section id="reviews" class="section container">
-      <h2 style="margin:0 0 14px; font-size:clamp(24px,3vw,36px)">Lo que dicen nuestros huéspedes</h2>
+      <h2 class="h-section">Lo que dicen nuestros huéspedes</h2>
       <div class="grid testi">
         <article class="card">
           <p class="quote">“La reserva fue rapidísima y el hotel superó mis expectativas. Volveré a usar Cloudbeds.”</p>
@@ -174,7 +172,7 @@
 
     <!-- FAQ -->
     <section id="faq" class="section container">
-      <h2 style="margin:0 0 14px; font-size:clamp(24px,3vw,36px)">Preguntas frecuentes</h2>
+      <h2 class="h-section">Preguntas frecuentes</h2>
       <details>
         <summary>¿Puedo cancelar sin costo?</summary>
         <p class="muted">Depende de la tarifa seleccionada. Indicamos claramente las políticas antes de pagar.</p>
@@ -191,13 +189,22 @@
 
     <!-- Contact / CTA -->
     <section id="contact" class="section container">
-      <div class="card" style="display:flex; gap:18px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+      <div class="card cta-inline">
         <div>
-          <h3 style="margin:0 0 6px">¿Listo para tu próxima escapada?</h3>
-          <p class="muted" style="margin:0">Explora ofertas exclusivas y asegura tu habitación ideal.</p>
+          <h3 class="m0">¿Listo para tu próxima escapada?</h3>
+          <p class="muted m0">Explora ofertas exclusivas y asegura tu habitación ideal.</p>
         </div>
         <a class="btn btn-primary" href="#search">Buscar disponibilidad</a>
       </div>
+    </section>
+
+    <!-- RESULTS (dinámicos desde API) -->
+    <section id="results" class="section container">
+      <h2 class="h-section">Resultados</h2>
+      <p class="muted mb-24">Mostramos habitaciones disponibles según tu búsqueda.</p>
+      <div id="resultsGrid" class="grid results-grid"></div>
+      <div id="resultsEmpty" class="empty" hidden>No encontramos disponibilidad para esas fechas en ese país.</div>
+      <div id="resultsError" class="error" hidden>Ocurrió un problema al consultar la disponibilidad. Intenta nuevamente.</div>
     </section>
   </main>
 

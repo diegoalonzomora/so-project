@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cloudbeds — Datos de Reserva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="brand"><div class="brand-badge">CB</div>Cloudbeds</div>
+      <div class="cta">
+        <a class="btn btn-outline" href="../index.html">Volver</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="section container" style="padding-top:120px">
+    <div class="grid" style="grid-template-columns: 1.2fr 1fr; gap:20px">
+      <!-- Card grande con habitación seleccionada -->
+      <article class="card" style="overflow:hidden; padding:0">
+        <img id="roomImg" src="" alt="Habitación" style="height:280px; width:100%; object-fit:cover">
+        <div class="body" style="padding:20px">
+          <div class="pill" id="hotelName">Hotel</div>
+          <h2 id="roomTitle" style="margin:8px 0 6px">Habitación</h2>
+          <p id="roomMeta" class="muted" style="margin:0 0 10px">Ciudad · País</p>
+          <div id="roomPrice" class="price" style="margin-bottom:10px">$— / noche</div>
+          <div id="roomExtra" class="muted" style="font-size:.9rem">Código: — · Capacidad: —</div>
+        </div>
+      </article>
+
+      <!-- Formulario de Cliente -->
+      <article class="card">
+        <h3 style="margin:0 0 12px">Tus datos</h3>
+        <form id="clienteForm" class="grid" style="grid-template-columns:1fr 1fr; gap:12px">
+          <input type="hidden" id="entrada" name="entrada">
+          <input type="hidden" id="salida" name="salida">
+          <input type="hidden" id="habitacionId" name="habitacionId">
+          <input type="hidden" id="hotelId" name="hotelId">
+
+          <label class="field" style="grid-column: span 2">
+            <input type="text" name="nombres" placeholder="Nombres *" required>
+          </label>
+          <label class="field">
+            <input type="text" name="apellidoPaterno" placeholder="Apellido paterno *" required>
+          </label>
+          <label class="field">
+            <input type="text" name="apellidoMaterno" placeholder="Apellido materno *" required>
+          </label>
+          <label class="field" style="grid-column: span 2">
+            <input type="email" name="correo" placeholder="Correo *" required>
+          </label>
+          <label class="field">
+            <input type="text" name="numeroTelefono" placeholder="Teléfono">
+          </label>
+          <label class="field">
+            <input type="text" name="documentoIdentidad" placeholder="Documento de identidad *" required>
+          </label>
+          <label class="field">
+            <select id="paisSelect" name="idPais" required>
+              <option value="">País *</option>
+            </select>
+          </label>
+          <label class="field">
+            <input type="text" name="ciudad" placeholder="Ciudad *" required>
+          </label>
+
+          <div style="grid-column: span 2; display:flex; gap:10px; justify-content:flex-end">
+            <button type="button" id="cancelBtn" class="btn btn-outline">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Confirmar reserva</button>
+          </div>
+        </form>
+        <div id="msg" class="msg" hidden></div>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      <div class="brand" style="gap:8px"><div class="brand-badge">CB</div>Cloudbeds</div>
+      <small>© <span id="year"></span> Cloudbeds.</small>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
