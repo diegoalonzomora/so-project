@@ -1,4 +1,5 @@
 <?php
+// factura.php
 include 'db.php';
 header('Content-Type: application/json; charset=utf-8');
 
@@ -8,30 +9,110 @@ function response($data) {
 }
 
 try {
+    // Una factura por id
     if (isset($_GET['id'])) {
         $id = intval($_GET['id']);
+
         $stmt = $conn->prepare("
-            SELECT f.*, c.nombreCliente, r.idReserva
+            SELECT
+                f.idFactura,
+                f.montoTotal,
+                f.fechaPago,
+                f.metodoPago,
+                f.descuento,
+                r.idReserva,
+                c.idCliente,
+                c.nombres,
+                c.apellidoPaterno,
+                c.apellidoMaterno
             FROM Factura f
-            INNER JOIN Cliente c ON f.idCliente = c.idCliente
-            INNER JOIN Reserva r ON f.idReserva = r.idReserva
+            LEFT JOIN Reserva r      ON r.idFactura = f.idFactura
+            LEFT JOIN Cliente c      ON c.idCliente = r.idCliente
             WHERE f.idFactura = ?
         ");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $res = $stmt->get_result();
-        $data = $res->fetch_assoc();
-        response($data ?: ["error" => "Factura no encontrada"]);
+
+        if ($res->num_rows === 0) {
+            response(["error" => "Factura no encontrada"]);
+        }
+
+        $factura = null;
+        $reservas = [];
+
+        while ($row = $res->fetch_assoc()) {
+            if ($factura === null) {
+                $factura = [
+                    "idFactura"   => (int)$row["idFactura"],
+                    "montoTotal"  => $row["montoTotal"],
+                    "fechaPago"   => $row["fechaPago"],
+                    "metodoPago"  => $row["metodoPago"],
+                    "descuento"   => $row["descuento"],
+                    "reservas"    => []
+                ];
+            }
+
+            if ($row["idReserva"] !== null) {
+                $reservas[] = [
+                    "idReserva" => (int)$row["idReserva"],
+                    "idCliente" => $row["idCliente"] !== null ? (int)$row["idCliente"] : null,
+                    "cliente"   => trim(($row["nombres"] ?? "") . " " . ($row["apellidoPaterno"] ?? "") . " " . ($row["apellidoMaterno"] ?? ""))
+                ];
+            }
+        }
+
+        $factura["reservas"] = $reservas;
+        response($factura);
     }
 
-    $res = $conn->query("
-        SELECT f.*, c.nombreCliente, r.idReserva
+    // Todas las facturas (con reservas y clientes asociados)
+    $sql = "
+        SELECT
+            f.idFactura,
+            f.montoTotal,
+            f.fechaPago,
+            f.metodoPago,
+            f.descuento,
+            r.idReserva,
+            c.idCliente,
+            c.nombres,
+            c.apellidoPaterno,
+            c.apellidoMaterno
         FROM Factura f
-        INNER JOIN Cliente c ON f.idCliente = c.idCliente
-        INNER JOIN Reserva r ON f.idReserva = r.idReserva
-    ");
-    if (!$res) response(["error" => $conn->error]);
-    response($res->fetch_all(MYSQLI_ASSOC));
+        LEFT JOIN Reserva r ON r.idFactura = f.idFactura
+        LEFT JOIN Cliente c ON c.idCliente = r.idCliente
+        ORDER BY f.idFactura
+    ";
+    $result = $conn->query($sql);
+    if (!$result) {
+        response(["error" => "Error en la consulta: " . $conn->error]);
+    }
+
+    $map = []; // agrupamos por idFactura
+    while ($row = $result->fetch_assoc()) {
+        $fid = (int)$row["idFactura"];
+        if (!isset($map[$fid])) {
+            $map[$fid] = [
+                "idFactura"  => $fid,
+                "montoTotal" => $row["montoTotal"],
+                "fechaPago"  => $row["fechaPago"],
+                "metodoPago" => $row["metodoPago"],
+                "descuento"  => $row["descuento"],
+                "reservas"   => []
+            ];
+        }
+
+        if ($row["idReserva"] !== null) {
+            $map[$fid]["reservas"][] = [
+                "idReserva" => (int)$row["idReserva"],
+                "idCliente" => $row["idCliente"] !== null ? (int)$row["idCliente"] : null,
+                "cliente"   => trim(($row["nombres"] ?? "") . " " . ($row["apellidoPaterno"] ?? "") . " " . ($row["apellidoMaterno"] ?? ""))
+            ];
+        }
+    }
+
+    response(array_values($map));
 
 } catch (Exception $e) {
     response(["error" => $e->getMessage()]);
