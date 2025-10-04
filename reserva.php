@@ -11,24 +11,32 @@ try {
     if (isset($_GET['id'])) {
         $id = intval($_GET['id']);
         $stmt = $conn->prepare("
-            SELECT r.*, c.nombreCliente, h.codigoHabitacion
+            SELECT r.idReserva, r.fechaEntrada, r.fechaSalida, r.estadoReserva,
+                   h.codigoHabitacion,
+                   c.nombres, c.apellidoPaterno, c.apellidoMaterno,
+                   f.montoTotal, f.fechaPago, f.metodoPago
             FROM Reserva r
-            INNER JOIN Cliente c ON r.idCliente = c.idCliente
             INNER JOIN Habitacion h ON r.idHabitacion = h.idHabitacion
+            INNER JOIN Cliente c ON r.idCliente = c.idCliente
+            LEFT JOIN Factura f ON r.idFactura = f.idFactura
             WHERE r.idReserva = ?
         ");
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        $result = $stmt->get_result();
-        $reserva = $result->fetch_assoc();
-        response($reserva ?: ["error" => "Reserva no encontrada"]);
+        $res = $stmt->get_result();
+        $data = $res->fetch_assoc();
+        response($data ?: ["error" => "Reserva no encontrada"]);
     }
 
     $sql = "
-        SELECT r.*, c.nombreCliente, h.codigoHabitacion
+        SELECT r.idReserva, r.fechaEntrada, r.fechaSalida, r.estadoReserva,
+               h.codigoHabitacion,
+               c.nombres, c.apellidoPaterno, c.apellidoMaterno,
+               f.montoTotal, f.fechaPago, f.metodoPago
         FROM Reserva r
-        INNER JOIN Cliente c ON r.idCliente = c.idCliente
         INNER JOIN Habitacion h ON r.idHabitacion = h.idHabitacion
+        INNER JOIN Cliente c ON r.idCliente = c.idCliente
+        LEFT JOIN Factura f ON r.idFactura = f.idFactura
     ";
     $result = $conn->query($sql);
     if (!$result) response(["error" => $conn->error]);
