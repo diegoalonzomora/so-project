@@ -17,7 +17,6 @@ function body() {
   return $_POST;
 }
 
-// GET ?id=...
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
@@ -27,16 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $r = $stmt->get_result()->fetch_assoc();
     response($r ?: ["error" => "Cliente no encontrado"], $r ? 200 : 404);
   }
+  
+  if (isset($_GET['documentoIdentidad'])) {
+    $dni = trim($_GET['documentoIdentidad']);
+    $stmt = $conn->prepare("SELECT * FROM Cliente WHERE documentoIdentidad = ?");
+    $stmt->bind_param("s", $dni);
+    $stmt->execute();
+    $r = $stmt->get_result()->fetch_assoc();
+    response($r ?: ["error" => "Cliente no encontrado"], $r ? 200 : 404);
+  }
+  
   $res = $conn->query("SELECT * FROM Cliente");
   if (!$res) response(["error" => $conn->error], 500);
   response($res->fetch_all(MYSQLI_ASSOC));
 }
 
-// POST (crear cliente)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $d = body();
 
-  // Validación mínima
   $req = ['nombres','apellidoPaterno','apellidoMaterno','correo','idPais','ciudad','documentoIdentidad','fechaRegistro'];
   foreach ($req as $k) { if (!isset($d[$k]) || $d[$k] === '') response(["error"=>"Falta campo: $k"], 422); }
 
@@ -48,13 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $idPais           = intval($d['idPais']);
   $ciudad           = $d['ciudad'];
   $documento        = $d['documentoIdentidad'];
-  $fechaRegistro    = $d['fechaRegistro']; // YYYY-MM-DD
+  $fechaRegistro    = $d['fechaRegistro'];
   $idCliente        = isset($d['idCliente']) && $d['idCliente'] !== '' ? intval($d['idCliente']) : null;
 
   try {
     $conn->begin_transaction();
 
-    // Si no envían id, generamos MAX+1 (mejor usar AUTO_INCREMENT en DB)
     if ($idCliente === null) {
       $r = $conn->query("SELECT COALESCE(MAX(idCliente)+1,1) AS next_id FROM Cliente FOR UPDATE");
       $idCliente = intval($r->fetch_assoc()['next_id']);
@@ -69,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$stmt->execute()) { $conn->rollback(); response(["error"=>$stmt->error], 500); }
 
     $conn->commit();
-    // devolver el registro
     $sel = $conn->prepare("SELECT * FROM Cliente WHERE idCliente = ?");
     $sel->bind_param("i", $idCliente);
     $sel->execute();

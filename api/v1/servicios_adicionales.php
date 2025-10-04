@@ -8,9 +8,16 @@ function response($data) {
 }
 
 try {
+    $idHotel = isset($_GET['idHotel']) ? intval($_GET['idHotel']) : 0;
+    
     if (isset($_GET['id'])) {
         $id = intval($_GET['id']);
-        $stmt = $conn->prepare("SELECT * FROM Servicios_Adicionales WHERE idServicioAdicional = ?");
+        $stmt = $conn->prepare("
+            SELECT sa.*, h.nombreHotel 
+            FROM ServiciosAdicionales sa 
+            LEFT JOIN Hotel h ON sa.idHotel = h.idHotel 
+            WHERE sa.idServicioAdicional = ?
+        ");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $res = $stmt->get_result();
@@ -18,7 +25,19 @@ try {
         response($data ?: ["error" => "Servicio adicional no encontrado"]);
     }
 
-    $res = $conn->query("SELECT * FROM Servicios_Adicionales");
+    $sql = "
+        SELECT sa.*, h.nombreHotel 
+        FROM ServiciosAdicionales sa 
+        LEFT JOIN Hotel h ON sa.idHotel = h.idHotel
+    ";
+    
+    if ($idHotel > 0) {
+        $sql .= " WHERE sa.idHotel = " . $idHotel;
+    }
+    
+    $sql .= " ORDER BY sa.nombre";
+    
+    $res = $conn->query($sql);
     if (!$res) response(["error" => $conn->error]);
     response($res->fetch_all(MYSQLI_ASSOC));
 
