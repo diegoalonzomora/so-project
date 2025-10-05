@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudbeds — Reserva tu habitación ideal</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header / Nav -->
+  <header class="header">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-badge">CB</div>
+        Cloudbeds
+      </div>
+      <div class="menu" id="navLinks">
+        <a href="#habitaciones">Habitaciones</a>
+        <a href="#buscar">Buscar</a>
+        <a href="mis-reservas.html">Mis Reservas</a>
+      </div>
+      <button id="hamb" class="hamb" aria-label="Menú">☰</button>
+    </nav>
+  </header>
+
+  <div id="mobile" class="mobile">
+    <a href="#habitaciones">Habitaciones</a>
+    <a href="#buscar">Buscar</a>
+    <a href="mis-reservas.html">Mis Reservas</a>
+  </div>
+  </header>
+
+  <main>
+    <!-- Hero con filtros -->
+    <section id="buscar" class="hero">
+      <div class="hero-wrap">
+        <img class="bg" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop" alt="Hotel lobby">
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="container">
+            <div class="hero-card">
+              <div class="eyebrow">Encuentra tu lugar perfecto</div>
+              <h1 class="title">Reserva habitaciones de hotel</h1>
+              <p class="lead">Compara precios, filtra por ciudad y capacidad, reserva en segundos</p>
+              
+              <form id="filtrosForm" class="search">
+                <div class="field">
+                  <span class="icon">📍</span>
+                  <select id="ciudadFilter" name="ciudad">
+                    <option value="">Todas las ciudades</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <span class="icon">👥</span>
+                  <select id="capacidadFilter" name="capacidad">
+                    <option value="">Capacidad</option>
+                    <option value="1">1 persona</option>
+                    <option value="2">2 personas</option>
+                    <option value="3">3 personas</option>
+                    <option value="4">4+ personas</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <span class="icon">💰</span>
+                  <select id="precioFilter" name="precio">
+                    <option value="">Precio</option>
+                    <option value="0-100">-$100</option>
+                    <option value="100-200">$100-200</option>
+                    <option value="200-300">$200-300</option>
+                    <option value="300-9999">$300+</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+              </form>
+
+              <div class="stats">
+                <div class="stat"><div class="v" id="totalHabitaciones">0</div><div class="k">Habitaciones</div></div>
+                <div class="stat"><div class="v" id="totalCiudades">0</div><div class="k">Ciudades</div></div>
+                <div class="stat"><div class="v">24/7</div><div class="k">Soporte</div></div>
+                <div class="stat"><div class="v">100%</div><div class="k">Seguro</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Habitaciones disponibles -->
+    <section id="habitaciones" class="section container">
+      <h2 class="h-section">Habitaciones Disponibles</h2>
+      <p id="habitacionesSubtitle" class="muted mb-24">Explora todas nuestras opciones</p>
+
+      <button id="limpiarFiltrosBtn" class="btn btn-outline" style="display: none; margin-bottom: 20px">
+        🔄 Limpiar filtros
+      </button>
+
+      <div id="loadingHabitaciones" style="text-align: center; padding: 40px">
+        <p style="color: #6366f1; font-size: 1.1rem">⏳ Cargando habitaciones...</p>
+      </div>
+
+      <div id="habitacionesGrid" class="grid rooms"></div>
+
+      <div id="emptyHabitaciones" class="empty" style="display: none; text-align: center; padding: 60px 20px; background: var(--card); border-radius: var(--radius); margin: 20px 0">
+        <p style="font-size: 3rem; margin: 0 0 12px">🔍</p>
+        <p class="muted" style="font-size: 1.1rem; margin: 0">No se encontraron habitaciones con estos filtros</p>
+        <button id="resetFiltersBtn" class="btn btn-primary" style="margin-top: 16px">Ver todas las habitaciones</button>
+      </div>
+
+      <div id="errorHabitaciones" class="error" style="display: none; text-align: center; padding: 60px 20px; background: rgba(220, 38, 38, 0.1); border-radius: var(--radius); margin: 20px 0; border: 1px solid rgba(220, 38, 38, 0.3)">
+        <p style="font-size: 3rem; margin: 0 0 12px">⚠️</p>
+        <p style="color: #dc2626; font-size: 1.1rem; margin: 0">Error al cargar habitaciones. Por favor, recarga la página.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container foot">
+      <div class="brand" style="gap:8px"><div class="brand-badge">CB</div>Cloudbeds</div>
+      <div class="social" aria-label="Redes sociales">
+        <a href="#" aria-label="Instagram">📸</a>
+        <a href="#" aria-label="Facebook">📘</a>
+        <a href="#" aria-label="Twitter">🐦</a>
+      </div>
+      <small>© <span id="year"></span> Cloudbeds. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

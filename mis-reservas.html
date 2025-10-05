@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cloudbeds — Mis Reservas</title>
+  <meta name="description" content="Gestiona tus reservas de hotel" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .reserva-card { display: flex; gap: 15px; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; }
+    .reserva-card img { width: 150px; height: 120px; object-fit: cover; border-radius: 6px; }
+    .reserva-info { flex: 1; }
+    .reserva-status { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 500; }
+    .status-confirmada { background: #10b981; color: white; }
+    .status-pendiente { background: #f59e0b; color: white; }
+    .status-cancelada { background: #dc2626; color: white; }
+    @media (max-width: 640px) {
+      .reserva-card { flex-direction: column; }
+      .reserva-card img { width: 100%; height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-badge">CB</div>
+        <a href="index.html" class="brand-name">Cloudbeds</a>
+      </div>
+      <div class="cta">
+        <a class="btn btn-outline" href="index.html">Inicio</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top" style="padding-top: 120px; min-height: 100vh">
+    <section class="section container">
+      <h1 class="h-section">Buscar Mis Reservas</h1>
+      <p class="muted mb-24">Ingresa tu documento de identidad o correo electrónico para ver tus reservas.</p>
+      
+      <form id="searchForm" class="card" style="max-width: 600px; margin: 0 auto 40px">
+        <div class="grid" style="grid-template-columns: 1fr auto; gap: 12px">
+          <input type="text" id="searchInput" name="search" placeholder="Documento de identidad o correo electrónico" required style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 1rem;">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+      </form>
+
+      <div id="loadingMsg" style="display: none; text-align: center; padding: 40px">
+        <p class="muted">Buscando reservas...</p>
+      </div>
+
+      <div id="reservasContainer"></div>
+
+      <div id="emptyMsg" style="display: none; text-align: center; padding: 40px">
+        <p class="muted">No se encontraron reservas. Verifica el documento o correo ingresado.</p>
+      </div>
+
+      <div id="errorMsg" style="display: none; text-align: center; padding: 40px">
+        <p style="color: #dc2626">Error al buscar reservas. Por favor, intenta nuevamente.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      <div class="brand" style="gap:8px"><div class="brand-badge">CB</div>Cloudbeds</div>
+      <div class="social" aria-label="Redes sociales">
+        <a href="#" aria-label="Instagram">📸</a>
+        <a href="#" aria-label="Facebook">📘</a>
+        <a href="#" aria-label="Twitter">🐦</a>
+      </div>
+      <small>© <span id="year"></span> Cloudbeds. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    $('#year').textContent = new Date().getFullYear();
+
+    const API_BASE = new URL('./api/v1/', window.location.href).href;
+    const API = {
+      cliente: new URL('cliente.php', API_BASE).href,
+      reserva: new URL('reserva.php', API_BASE).href,
+    };
+
+    async function fetchJSON(url) {
+      const r = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    }
+
+    function pickImage(reserva) {
+      const tipo = (reserva?.tipoHabitacion || '').toLowerCase();
+      if (tipo.includes('suite')) return 'https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=600&auto=format&fit=crop';
+      if (tipo.includes('deluxe')) return 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=600&auto=format&fit=crop';
+      return 'https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=600&auto=format&fit=crop';
+    }
+
+    function renderReservas(reservas) {
+      const container = $('#reservasContainer');
+      container.innerHTML = '';
+      reservas.forEach(reserva => {
+        const card = document.createElement('div');
+        card.className = 'reserva-card';
+        
+        const estado = (reserva.estadoReserva || 'Pendiente').toLowerCase();
+        let statusClass = 'status-pendiente';
+        if (estado === 'confirmada') statusClass = 'status-confirmada';
+        if (estado === 'cancelada') statusClass = 'status-cancelada';
+
+        card.innerHTML = `
+          <img src="${pickImage(reserva)}" alt="Habitación">
+          <div class="reserva-info">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px">
+              <div>
+                <h3 style="margin: 0 0 4px">${reserva.nombreHotel || 'Hotel'}</h3>
+                <p class="muted" style="margin: 0">${reserva.ciudad || ''}</p>
+              </div>
+              <span class="reserva-status ${statusClass}">${reserva.estadoReserva || 'Pendiente'}</span>
+            </div>
+            <p style="margin: 8px 0"><strong>${reserva.tipoHabitacion || 'Habitación'}</strong> (${reserva.codigoHabitacion || '—'})</p>
+            <p class="muted" style="margin: 8px 0">📅 ${reserva.fechaEntrada} → ${reserva.fechaSalida}</p>
+            <p style="margin: 8px 0"><strong>Total:</strong> S/${Number(reserva.montoTotal || 0).toFixed(2)}</p>
+            <div style="margin-top: 12px">
+              <a href="confirmacion/exito.html?idReserva=${reserva.idReserva}" class="btn btn-primary" style="font-size: 0.9rem; padding: 8px 16px">Ver Detalles</a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    $('#searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const searchValue = $('#searchInput').value.trim();
+      if (!searchValue) return;
+
+      // Ocultar todos los mensajes
+      $('#loadingMsg').style.display = 'block';
+      $('#emptyMsg').style.display = 'none';
+      $('#errorMsg').style.display = 'none';
+      $('#reservasContainer').innerHTML = '';
+
+      try {
+        // Primero buscar el cliente
+        const clientesUrl = `${API.cliente}`;
+        const clientesData = await fetchJSON(clientesUrl);
+        const clientes = Array.isArray(clientesData) ? clientesData : (clientesData?.data || []);
+
+        // Buscar por documento o correo
+        const cliente = clientes.find(c => 
+          c.documentoIdentidad === searchValue || 
+          c.correo?.toLowerCase() === searchValue.toLowerCase()
+        );
+
+        if (!cliente) {
+          $('#loadingMsg').style.display = 'none';
+          $('#emptyMsg').style.display = 'block';
+          return;
+        }
+        // Obtener reservas del cliente
+        const reservasUrl = `${API.reserva}?idCliente=${cliente.idCliente}`;
+        const reservasData = await fetchJSON(reservasUrl);
+        const reservas = Array.isArray(reservasData) ? reservasData : (reservasData?.data || []);
+        $('#loadingMsg').style.display = 'none';
+
+        if (reservas.length === 0) {
+          $('#emptyMsg').style.display = 'block';
+        } else {
+          renderReservas(reservas);
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        $('#loadingMsg').style.display = 'none';
+        $('#errorMsg').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

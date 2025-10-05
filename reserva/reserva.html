@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cloudbeds — Datos de Reserva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="brand"><div class="brand-badge">CB</div>Cloudbeds</div>
+      <div class="cta">
+        <a class="btn btn-outline" href="../index.html">Volver</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="section container" style="padding-top:120px">
+    <div class="grid" style="grid-template-columns: 1.2fr 1fr; gap:20px; align-items: start">
+      <!-- Card grande con habitación seleccionada -->
+      <div>
+        <article class="card" style="overflow:hidden; padding:0; margin-bottom: 20px">
+          <img id="roomImg" src="" alt="Habitación" style="height:280px; width:100%; object-fit:cover">
+          <div class="body" style="padding:20px">
+            <div class="pill" id="hotelName">Hotel</div>
+            <h2 id="roomTitle" style="margin:8px 0 6px">Habitación</h2>
+            <p id="roomMeta" class="muted" style="margin:0 0 10px">Ciudad · País</p>
+            <div id="roomPrice" class="price" style="margin-bottom:10px">PEN— / noche</div>
+            <div id="roomExtra" class="muted" style="font-size:.9rem">Código: — · Capacidad: —</div>
+          </div>
+        </article>
+
+        <!-- Servicios Adicionales -->
+        <article class="card">
+          <h3 style="margin:0 0 12px">Servicios Adicionales</h3>
+          <div id="serviciosAdicionales" style="display: flex; flex-direction: column; gap: 10px">
+            <p class="muted">Cargando servicios...</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Columna derecha: Formulario + Resumen -->
+      <div>
+        <!-- Resumen de Pago -->
+        <article class="card" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border: 1px solid rgba(99, 102, 241, 0.2); padding: 24px">
+          <h3 style="margin:0 0 4px; color: #a5b4fc; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px">Resumen de Pago</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 0 12px">
+            <span style="font-size: 1.1rem; font-weight: 500; color: var(--text)">Total</span>
+            <span id="totalAmount" style="font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text">—</span>
+          </div>
+          <!-- Aquí se insertará el desglose dinámicamente -->
+        </article>
+
+        <!-- Formulario de Cliente -->
+        <article class="card">
+          <h3 style="margin:0 0 12px">Tus datos</h3>
+          <form id="clienteForm" class="grid" style="grid-template-columns:1fr 1fr; gap:12px">
+            <input type="hidden" id="habitacionId" name="habitacionId">
+            <input type="hidden" id="hotelId" name="hotelId">
+            <input type="hidden" id="idClienteExistente" name="idClienteExistente">
+
+            <label class="field" style="grid-column: span 2; position: relative">
+              <span style="font-weight: 500; display: block; margin-bottom: 4px">📅 Fecha de entrada *</span>
+              <input type="text" id="entrada" name="entrada" placeholder="Selecciona fecha de entrada" required readonly style="cursor: pointer; background: rgba(99, 102, 241, 0.08)">
+            </label>
+
+            <label class="field" style="grid-column: span 2; position: relative">
+              <span style="font-weight: 500; display: block; margin-bottom: 4px">📅 Fecha de salida *</span>
+              <input type="text" id="salida" name="salida" placeholder="Selecciona fecha de salida" required readonly style="cursor: pointer; background: rgba(99, 102, 241, 0.08)">
+            </label>
+
+            <!-- Búsqueda de cliente por DNI -->
+            <div style="grid-column: span 2; padding: 16px; background: rgba(99, 102, 241, 0.08); border-radius: 12px; margin-bottom: 8px">
+              <label class="field" style="margin-bottom: 0">
+                <span style="font-weight: 600; display: block; margin-bottom: 8px">🔍 Buscar cliente por DNI</span>
+                <div style="display: flex; gap: 8px">
+                  <input type="text" id="dniBuscar" placeholder="Ingresa tu DNI" style="flex: 1">
+                  <button type="button" id="buscarClienteBtn" class="btn btn-primary" style="white-space: nowrap">Buscar</button>
+                </div>
+                <small class="muted" style="display: block; margin-top: 8px">Si ya tienes una cuenta, ingresa tu DNI para cargar tus datos automáticamente</small>
+              </label>
+            </div>
+
+            <div id="clienteEncontrado" style="grid-column: span 2; display: none; padding: 12px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; margin-bottom: 12px">
+              <p style="margin: 0; color: #86efac; font-weight: 500">✅ Cliente encontrado: <span id="nombreClienteEncontrado"></span></p>
+            </div>
+
+            <!-- Campos del formulario (se mostrarán/ocultarán según si el cliente existe) -->
+            <div id="camposCliente" style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+              <label class="field" style="grid-column: span 2">
+                <input type="text" id="documentoIdentidad" name="documentoIdentidad" placeholder="Documento de identidad (DNI) *">
+              </label>
+              <label class="field" style="grid-column: span 2">
+                <input type="text" id="nombres" name="nombres" placeholder="Nombres *">
+              </label>
+              <label class="field">
+                <input type="text" id="apellidoPaterno" name="apellidoPaterno" placeholder="Apellido paterno *">
+              </label>
+              <label class="field">
+                <input type="text" id="apellidoMaterno" name="apellidoMaterno" placeholder="Apellido materno *">
+              </label>
+              <label class="field" style="grid-column: span 2">
+                <input type="email" id="correo" name="correo" placeholder="Correo *">
+              </label>
+              <label class="field">
+                <input type="text" id="numeroTelefono" name="numeroTelefono" placeholder="Teléfono">
+              </label>
+              <label class="field">
+                <select id="paisSelect" name="idPais">
+                  <option value="">País *</option>
+                </select>
+              </label>
+              <label class="field" style="grid-column: span 2">
+                <input type="text" id="ciudad" name="ciudad" placeholder="Ciudad *">
+              </label>
+            </div>
+
+            <label class="field" style="grid-column: span 2">
+              <select name="metodoPago" required>
+                <option value="">Método de pago *</option>
+                <option value="Tarjeta">Tarjeta de crédito/débito</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia bancaria</option>
+              </select>
+            </label>
+
+            <div style="grid-column: span 2; display:flex; gap:10px; justify-content:flex-end">
+              <button type="button" id="cancelBtn" class="btn btn-outline">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Confirmar reserva</button>
+            </div>
+          </form>
+          <div id="msg" class="msg" hidden></div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      <div class="brand" style="gap:8px"><div class="brand-badge">CB</div>Cloudbeds</div>
+      <small>© <span id="year"></span> Cloudbeds.</small>
+    </div>
+  </footer>
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+  
+  <script src="app.js"></script>
+</body>
+</html>
