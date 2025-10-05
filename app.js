@@ -63,6 +63,8 @@ async function cargarDatosIniciales() {
       fetchJSON(API.habitaciones)
     ]);
 
+    console.log(hotelesData, habitacionesData);
+
     todosHoteles = Array.isArray(hotelesData) ? hotelesData : (hotelesData?.data || []);
     todasHabitaciones = Array.isArray(habitacionesData) ? habitacionesData : (habitacionesData?.data || []);
 

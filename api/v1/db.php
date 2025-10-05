@@ -2,10 +2,10 @@
 header('Content-Type: application/json; charset=utf-8');
 
 $conn = mysqli_connect(
-    'localhost',
-    'root',
-    '',
-    'cloudbeds'
+    '20.63.12.72',
+    'ecommerce_admin',
+    'project1',
+    'Cloudbeds'
 );
 
 if (!$conn) {
