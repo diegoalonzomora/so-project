@@ -1,15 +1,18 @@
 :root{
-  --bg:#0d0f1a;
-  --bg-2:#111427;
-  --card:#151936;
-  --text:#e9ecf8;
-  --muted:#b9bfda;
-  --brand:#e2b857;
-  --brand-2:#ffe49b;
-  --glass:rgba(255,255,255,.08);
-  --shadow:0 10px 30px rgba(0,0,0,.35);
-  --radius:18px;
-  --radius-lg:28px;
+  --bg:#f8f9fc;
+  --bg-2:#ffffff;
+  --card:#ffffff;
+  --text:#1e293b;
+  --muted:#64748b;
+  --brand:#1a3a7d;
+  --brand-2:#2563eb;
+  --accent:#10b981;
+  --accent-2:#34d399;
+  --glass:rgba(255,255,255,.95);
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.12);
+  --radius:12px;
+  --radius-lg:20px;
   --max:1200px;
 }
 *{box-sizing:border-box}
@@ -18,10 +21,7 @@ body{
   margin:0;
   font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
   color:var(--text);
-  background:
-    radial-gradient(1200px 600px at 80% -10%, #24307a33 0%, transparent 60%),
-    radial-gradient(800px 500px at -10% 20%, #6b4fe433 0%, transparent 60%),
-    linear-gradient(180deg, var(--bg), var(--bg-2));
+  background:linear-gradient(180deg, #f8f9fc 0%, #e8eef5 100%);
 }
 a{color:inherit; text-decoration:none}
 img{max-width:100%; display:block}
